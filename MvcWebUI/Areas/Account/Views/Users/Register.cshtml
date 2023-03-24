@@ -1,0 +1,128 @@
+﻿@using DataAccess.Enums;
+
+@model AccountRegisterModel
+@*Model namespace using directive should be added to _ViewImports.cshtml.*@
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-12">
+        <form asp-action="Register">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row mb-3">
+                <label asp-for="UserName" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Password" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <input asp-for="Password" class="form-control" type="password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="ConfirmPassword" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <input asp-for="ConfirmPassword" class="form-control" type="password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="UserDetail.Sex" class="col-2 col-form-label"></label>
+                <div class="col-5 pt-2">
+                    <div class="form-check-inline">
+                        <input asp-for="UserDetail.Sex" type="radio" value="@((int)Sex.Woman)" id="woman" class="form-check-input" checked /> <label for="woman" class="form-check-label">@Sex.Woman</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input asp-for="UserDetail.Sex" type="radio" value="@((int)Sex.Man)" id="man" class="form-check-input" /> <label for="man" class="form-check-label">@Sex.Man</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="UserDetail.Email" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <input asp-for="UserDetail.Email" class="form-control" />
+                    <span asp-validation-for="UserDetail.Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="UserDetail.Phone" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <input asp-for="UserDetail.Phone" class="form-control" />
+                    <span asp-validation-for="UserDetail.Phone" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="UserDetail.Address" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <textarea asp-for="UserDetail.Address" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="UserDetail.Address" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="UserDetail.CountryId" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <select asp-for="UserDetail.CountryId" class="form-select" id="countries" asp-items="ViewBag.Countries">
+                        <option value="">-- Select Country --</option>
+                    </select>
+                    <span asp-validation-for="UserDetail.CountryId" class="text-danger" id="countriesmessage"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="UserDetail.CityId" class="col-2 col-form-label"></label>
+                <div class="col-5">
+                    <select asp-for="UserDetail.CityId" class="form-select cities" asp-items="ViewBag.Cities">
+                        <option value="">-- Select Country --</option>
+                    </select>
+                    <span asp-validation-for="UserDetail.CityId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="offset-2 col-5">
+                    <input type="submit" value="Register" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        $(function () {
+            $("#countries").change(function () {
+                $(".cities").empty();
+                var selectedCountryId = $("#countries").val();
+                if (selectedCountryId == "") {
+                    $("#countriesmessage").text("Please select a country!");
+                    $(".cities").append('<option value="">-- Select Country --</option>');
+                }
+                else {
+                    $(".cities").append('<option value="">-- Select City --</option>');
+                    // $.ajax
+                    $.getJSON(
+                        "/Cities/GetList/",
+                        { countryId: selectedCountryId },
+                        function (cities) {
+                            for (const city of cities) {
+                                $(".cities").append('<option value="' + city.id + '">' + city.name + '</option>');
+                                //  <option value="1">Ankara</option>
+                            }
+                        }
+                    );
+                }
+            });
+        });
+    </script>
+}
+
+
+

@@ -1,0 +1,19 @@
+﻿@model ProductModel
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    @*@Html.Partial("_ProductDetails", Model)*@
+    <partial name="_ProductDetails" model="Model" />
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>&nbsp;|&nbsp;
+    <a asp-action="Index">Back to Product List</a>
+</div>
+
+
+

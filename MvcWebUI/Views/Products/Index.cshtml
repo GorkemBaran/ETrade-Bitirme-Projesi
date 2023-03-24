@@ -1,0 +1,115 @@
+﻿@model IEnumerable<ProductModel>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["Message"] is not null)
+{
+    <p class="text-danger">@TempData["Message"]</p>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Create New Product</a>
+    </p>
+}
+<table id="products" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UnitPriceDisplay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpirationDateDisplay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryDisplay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StoresDisplay)
+            </th>
+            <th style="width:10%;">
+                @Html.DisplayNameFor(model => model.ImgSrcDisplay)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitPriceDisplay)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StockAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ExpirationDateDisplay)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryDisplay)
+                </td>
+                <td>
+                    @Html.Raw(item.StoresDisplay)
+                </td>
+
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(item.ImgSrcDisplay))
+                    {
+                        <img src="@item.ImgSrcDisplay" class="img-thumbnail" />
+                    }
+                </td>
+
+                <td>
+                    @*@Html.ActionLink("Details", "Details", new { id = item.Id })*@
+                    @*<a asp-action="Details" asp-controller="Products" asp-route-id="@item.Id">Details</a>*@
+
+
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        @:&nbsp;|&nbsp;
+                        if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <text>&nbsp;|&nbsp;</text>
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+                        else
+                        {
+                            <a asp-action="AddToCart" asp-controller="Cart" asp-route-productId="@item.Id">Add to Cart</a>
+                        }
+
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <link href="~/lib/datatables/css/jquery.datatables.min.css" rel="stylesheet" />
+    <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#products").DataTable();
+        });
+    </script>
+}
+
